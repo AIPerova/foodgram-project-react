@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'colorfield',
     'user.apps.UserConfig',
     'recipes.apps.RecipesConfig',
     'tag.apps.TagConfig',
@@ -116,3 +117,7 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# переменные для моделей
+MAX_LENGTH_NAME = 200
+MAX_LENGTH_COLOR = 7
