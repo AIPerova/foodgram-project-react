@@ -1,13 +1,57 @@
+from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
-
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from tag.models import Tag
-from ingredient.models import Ingredient
-
 User = get_user_model()
+
+
+class Tag(models.Model):
+    '''Модель тегов.'''
+    name = models.CharField(
+        verbose_name='Название тега',
+        max_length=settings.MAX_LENGTH_NAME
+    )
+    color = ColorField(
+        verbose_name='Цвет тега',
+        format='hex',
+        max_length=settings.MAX_LENGHT_COLOR
+    )
+    slug = models.SlugField(
+        unique=True,
+        verbose_name='Идентификатор тега'
+    )
+
+    class Meta:
+        ordering = ('name',)
+        default_related_name = 'tags'
+        verbose_name = 'тег'
+        verbose_name_plural = 'Теги'
+
+    def __str__(self):
+        return self.name
+
+
+class Ingredient(models.Model):
+    '''Модель для ингредиентов.'''
+    name = models.CharField(
+        verbose_name='Название ингредиента',
+        max_length=settings.MAX_LENGTH_NAME
+    )
+    measurement_unit = models.CharField(
+        verbose_name='Единицы измерения ингредиента',
+        max_length=settings.MAX_LENGTH_NAME
+    )
+
+    class Meta:
+        ordering = ('name',)
+        default_related_name = 'ingredient'
+        verbose_name = 'ингредиент'
+        verbose_name_plural = 'Ингредиенты'
+
+    def __str__(self):
+        return self.name
 
 
 class Recipe(models.Model):
