@@ -1,7 +1,29 @@
-from django.contrib.auth import get_user_model
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-User = get_user_model()
+
+class User(AbstractUser):
+    '''Модель переопреляющая пользователя.'''
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = [
+        'username',
+        'first_name',
+        'last_name',
+    ]
+    email = models.EmailField(
+        'email address',
+        max_length=settings.MAX_EMAIL_LENGHT,
+        unique=True,
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
+    def __str__(self):
+        return self.username
 
 
 class Subscription(models.Model):
