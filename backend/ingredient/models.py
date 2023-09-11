@@ -5,11 +5,11 @@ from django.db import models
 class Ingredient(models.Model):
     '''Модель для ингредиентов.'''
     name = models.CharField(
-        verbose_name='Название ингридиента',
+        verbose_name='Название ингредиента',
         max_length=settings.MAX_LENGTH_NAME
     )
     measurement_unit = models.CharField(
-        verbose_name='Единицы измерения ингридиента',
+        verbose_name='Единицы измерения ингредиента',
         max_length=settings.MAX_LENGTH_NAME
     )
 
