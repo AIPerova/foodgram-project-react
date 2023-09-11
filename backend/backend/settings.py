@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'colorfield',
+    'django_filters',
     'user.apps.UserConfig',
     'recipes.apps.RecipesConfig',
     'tag.apps.TagConfig',
