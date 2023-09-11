@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'colorfield',
     'django_filters',
+    'api.apps.ApiConfig',
     'user.apps.UserConfig',
     'recipes.apps.RecipesConfig',
     'tag.apps.TagConfig',
@@ -121,4 +122,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # переменные для моделей
 MAX_LENGTH_NAME = 200
-MAX_LENGTH_COLOR = 7
+MAX_LENGHT_COLOR = 7

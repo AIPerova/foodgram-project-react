@@ -29,7 +29,7 @@ class Recipe(models.Model):
     )
     image = models.ImageField(
         verbose_name='Изображение блюда',
-        upload_to='app/',
+        upload_to='recipes/images',
     )
     name = models.CharField(
         verbose_name='Название рецепта',
@@ -98,4 +98,4 @@ class TagToRecipe(models.Model):
         verbose_name_plural = 'Теги/Рецепты'
 
     def __str__(self):
-        return f'Рецепта {self.recipe} с тегом {self.tag}'
+        return f'Рецепт {self.recipe} с тегом {self.tag}'
