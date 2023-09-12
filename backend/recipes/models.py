@@ -151,8 +151,8 @@ class TagToRecipe(models.Model):
         return f'Рецепт {self.recipe} с тегом {self.tag}'
 
 
-class Favorite(models.Model):
-    '''Модель избранных рецептов.'''
+class BaseRecipeList(models.Model):
+    '''Базовый класс для списка рецептов.'''
     user = models.ForeignKey(
         User,
         verbose_name='Пользователь',
@@ -165,45 +165,35 @@ class Favorite(models.Model):
     )
 
     class Meta:
+        abstract = True
         ordering_by = ('recipe',)
-        default_related_name = 'fav_recipe',
-        verbose_name = 'Избранное'
-        verbose_name_plural = 'Избранные'
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
-                name='unique_fav'
+                name='unique_recipe'
             )
         ]
+
+
+class Favorite(BaseRecipeList):
+    '''Модель избранных рецептов.'''
+
+    class Meta:
+        default_related_name = 'fav_recipe',
+        verbose_name = 'Избранное'
+        verbose_name_plural = 'Избранные'
 
     def __str__(self):
         return f'Рецепт {self.recipe} в избранном {self.user}'
 
 
-class ShoppingCart(models.Model):
+class ShoppingCart(BaseRecipeList):
     '''Модель списка покупок.'''
-    user = models.ForeignKey(
-        User,
-        verbose_name='Пользователь',
-        on_delete=models.CASCADE,
-    )
-    recipe = models.ForeignKey(
-        Recipe,
-        verbose_name='Рецепт',
-        on_delete=models.CASCADE,
-    )
 
     class Meta:
-        ordering_by = ('recipe',)
         default_related_name = 'shopping_cart'
         verbose_name = 'список покупок'
         verbose_name_plural = 'Списки покупок'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'recipe'],
-                name='unique_shop_cart'
-            )
-        ]
 
     def __str__(self):
         return f"Рецепт {self.recipe} в списке покупок {self.user}"
