@@ -1,7 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 
-from tag.models import Tag
-from ingredient.models import Ingredient
+from recipes.models import Ingredient, Tag
 
 
 class IngredientSerializer(ModelSerializer):

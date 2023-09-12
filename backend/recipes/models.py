@@ -1,10 +1,9 @@
 from colorfield.fields import ColorField
-from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
 
-User = get_user_model()
+from user.models import User
 
 
 class Tag(models.Model):
@@ -103,11 +102,12 @@ class IngredientToRecipe(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
+        verbose_name='Ингредиент'
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='ingredienttorecipe'
+        verbose_name='Рецепт'
     )
     amount = models.PositiveSmallIntegerField(
         validators=[
@@ -119,6 +119,12 @@ class IngredientToRecipe(models.Model):
         verbose_name = 'ингредиент/рецепт'
         verbose_name_plural = 'Ингредиенты/Рецепты'
         ordering = ('recipe',)
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='unique_ingredient_in_recipe',
+            )
+        ]
 
     def __str__(self):
         return f'Для {self.recipe} необходим ингредиент {self.ingredient}'
@@ -143,3 +149,48 @@ class TagToRecipe(models.Model):
 
     def __str__(self):
         return f'Рецепт {self.recipe} с тегом {self.tag}'
+
+
+class Favorite(models.Model):
+    '''Модель избранных рецептов.'''
+    user = models.ForeignKey(
+        User,
+        verbose_name='Пользователь',
+        on_delete=models.CASCADE,
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        verbose_name='Рецепт',
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        ordering_by = ('recipe',)
+        default_related_name = 'fav_recipe',
+        verbose_name = 'Избранное'
+        verbose_name_plural = 'Избранные'
+
+    def __str__(self):
+        return f'Рецепт {self.recipe} в избранном {self.user}'
+
+
+class ShoppingCart(models.Model):
+    '''Модель списка покупок.'''
+    user = models.ForeignKey(
+        User,
+        verbose_name='Пользователь',
+        on_delete=models.CASCADE,
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        verbose_name='Рецепт',
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        default_related_name = 'shopping_cart'
+        verbose_name = 'список покупок'
+        verbose_name_plural = 'Списки покупок'
+
+    def __str__(self):
+        return f"Рецепт {self.recipe} в списке покупок {self.user}"

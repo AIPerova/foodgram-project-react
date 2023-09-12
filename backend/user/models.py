@@ -5,17 +5,19 @@ from django.db import models
 
 class User(AbstractUser):
     '''Модель переопреляющая пользователя.'''
+    email = models.EmailField(
+        'email address',
+        max_length=settings.MAX_EMAIL_LENGHT,
+        unique=True,
+    )
+    first_name = models.CharField(max_length=150, blank=True)
+    last_name = models.CharField(max_length=150, blank=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = [
         'username',
         'first_name',
         'last_name',
     ]
-    email = models.EmailField(
-        'email address',
-        max_length=settings.MAX_EMAIL_LENGHT,
-        unique=True,
-    )
 
     class Meta:
         ordering = ['id']
@@ -50,12 +52,10 @@ class Subscription(models.Model):
             models.UniqueConstraint(
                 fields=['user', 'author'],
                 name='unique_follow',
-                violation_error_message='За этим автором уже следим!'
             ),
             models.CheckConstraint(
                 name='not_self_follow',
                 check=~models.Q(user=models.F('author')),
-                violation_error_message='Никаких самоподписок!'
             ),
         ]
 
