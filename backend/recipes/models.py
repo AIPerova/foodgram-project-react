@@ -45,7 +45,7 @@ class Ingredient(models.Model):
 
     class Meta:
         ordering = ('name',)
-        default_related_name = 'ingredient'
+        default_related_name = 'ingredients'
         verbose_name = 'ингредиент'
         verbose_name_plural = 'Ингредиенты'
 
@@ -166,7 +166,7 @@ class BaseRecipeList(models.Model):
 
     class Meta:
         abstract = True
-        ordering_by = ('recipe',)
+        ordering = ('recipe',)
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
@@ -179,7 +179,7 @@ class Favorite(BaseRecipeList):
     '''Модель избранных рецептов.'''
 
     class Meta:
-        default_related_name = 'fav_recipe',
+        default_related_name = 'fav_recipe'
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранные'
 
