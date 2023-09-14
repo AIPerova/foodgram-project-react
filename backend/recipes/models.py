@@ -85,6 +85,7 @@ class Recipe(models.Model):
         validators=[
             MinValueValidator(1, message='Не менее одной минуты'),
         ],
+        verbose_name='Время приготовления'
     )
 
     class Meta:
@@ -180,8 +181,8 @@ class Favorite(BaseRecipeList):
 
     class Meta:
         default_related_name = 'fav_recipe'
-        verbose_name = 'Избранное'
-        verbose_name_plural = 'Избранные'
+        verbose_name = 'избранный рецепт'
+        verbose_name_plural = 'Избранные рецепты'
 
     def __str__(self):
         return f'Рецепт {self.recipe} в избранном {self.user}'
