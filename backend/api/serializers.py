@@ -35,6 +35,49 @@ class UserSerializer(ModelSerializer):
         ).exists()
 
 
+class SubscribeSerializer(UserSerializer):
+    recipes_count = SerializerMethodField()
+    recipes = SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ('id',
+                  'email',
+                  'username',
+                  'last_name',
+                  'first_name',
+                  'is_subscribed',
+                  'recipes_count',
+                  'recipes'
+                  )
+        read_only_fields = ('email', 'username')
+
+    def validate(self, data):
+        author = self.instance
+        user = self.context.get('request').user
+        if Subscription.objects.filter(author=author, user=user).exists():
+            raise ValidationError(
+                'За этим товарищем мы уже следим!'
+            )
+        if user == author:
+            raise ValidationError(
+                'Самоподписка - это лишее!',
+            )
+        return data
+
+    def get_recipes_count(self, obj):
+        return obj.recipes.count()
+
+    def get_recipes(self, obj):
+        request = self.context.get('request')
+        limit = request.GET.get('recipes_limit')
+        recipes = obj.recipes.all()
+        if limit:
+            recipes = recipes[:int(limit)]
+        serializer = RecipeShortSerializer(recipes, many=True, read_only=True)
+        return serializer.data
+
+
 class IngredientSerializer(ModelSerializer):
     '''Сериализатор для ингредиентов.'''
     class Meta:

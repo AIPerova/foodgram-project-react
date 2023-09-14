@@ -128,7 +128,12 @@ REST_FRAMEWORK = {
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-    ]
+    ],
+
+    'DEFAULT_PAGINATION_CLASS':
+        'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
+    'UPLOADED_FILES_USE_URL': False,
 }
 # переменные для моделей
 MAX_LENGTH_NAME = 200
