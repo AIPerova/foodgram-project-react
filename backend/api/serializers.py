@@ -8,13 +8,31 @@ from rest_framework.serializers import ModelSerializer
 from drf_extra_fields.fields import Base64ImageField
 
 
-from recipes.models import Ingredient, IngredientToRecipe, Recipe, Tag, User
+from recipes.models import Ingredient, IngredientToRecipe, Recipe, Tag
+from user.models import Subscription, User
 
 
 class UserSerializer(ModelSerializer):
+
+    is_subscribed = SerializerMethodField()
+
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ('id',
+                  'email',
+                  'username',
+                  'last_name',
+                  'first_name',
+                  'is_subscribed')
+
+    def get_is_subscribed(self, obj):
+        user = self.context['request'].user
+        if user.is_anonymous:
+            return False
+        return Subscription.objects.filter(
+            user=user,
+            author=obj
+        ).exists()
 
 
 class IngredientSerializer(ModelSerializer):
@@ -82,7 +100,9 @@ class RecipeReadSerializer(ModelSerializer):
 
 
 class IngredientToRecipeWriteSerializer(ModelSerializer):
+    '''Сериализатор количества продуктов в рецепте'''
     id = IntegerField(write_only=True)
+    amount = IntegerField(write_only=True)
 
     class Meta:
         model = IngredientToRecipe
@@ -163,3 +183,8 @@ class RecipeWriteSerializer(ModelSerializer):
         return self.add_ingredients_and_tags(
             tags, ingredients, instance
         )
+
+    def to_representation(self, instance):
+        request = self.context.get('request')
+        context = {'request': request}
+        return RecipeReadSerializer(instance, context=context).data
