@@ -135,6 +135,20 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 5,
     'UPLOADED_FILES_USE_URL': False,
 }
+
+DJOSER = {
+    'SERIALIZERS': {
+        'user': 'api.serializers.UserSerializer',
+        'current_user': 'api.serializers.UserSerializer',
+    },
+
+    'PERMISSIONS': {
+        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
+        'user_list': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
+    },
+    'HIDE_USERS': False,
+}
+
 # переменные для моделей
 MAX_LENGTH_NAME = 200
 MAX_LENGHT_COLOR = 7

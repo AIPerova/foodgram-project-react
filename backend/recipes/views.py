@@ -9,7 +9,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from .filters import IngredientFilter
 from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
-# from .permissions import IsAuthorOrReadOnly
+from .permissions import IsAuthorOrReadOnly
 from api.serializers import (IngredientSerializer,
                              RecipeReadSerializer,
                              RecipeShortSerializer,
@@ -21,7 +21,7 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     '''Вьюсет для ингредиентов.'''
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    # permission_classes
+    pagination_class = None
     filter_backends = (DjangoFilterBackend,)
     filter = IngredientFilter
 
@@ -30,14 +30,13 @@ class TagViewSet(ReadOnlyModelViewSet):
     '''Вьюсет для тегов.'''
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    # permission_classes
+    pagination_class = None
 
 
 class RecipeViewSet(ModelViewSet):
     '''Вьюсет для рецептов.'''
     queryset = Recipe.objects.all()
-    # permission_classes = IsAuthorOrReadOnly
-    # pagination_class = CustomPagination
+    permission_classes = (IsAuthorOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     # filterset_class = RecipeFilter
 
@@ -74,8 +73,7 @@ class RecipeViewSet(ModelViewSet):
         '''Метод для добавления.удаления рецепов в избранное.'''
         if request.method == 'POST':
             return self.add_to(Favorite, request.user, pk)
-        else:
-            return self.delete_from(Favorite, request.user, pk)
+        return self.delete_from(Favorite, request.user, pk)
 
     @action(
         detail=True,
@@ -86,5 +84,4 @@ class RecipeViewSet(ModelViewSet):
         '''Метод для добавления удаления рецептов в список покупок.'''
         if request.method == 'POST':
             return self.add_to(ShoppingCart, request.user, pk)
-        else:
-            return self.delete_from(ShoppingCart, request.user, pk)
+        return self.delete_from(ShoppingCart, request.user, pk)

@@ -13,7 +13,6 @@ from user.models import Subscription, User
 
 
 class UserSerializer(ModelSerializer):
-
     is_subscribed = SerializerMethodField()
 
     class Meta:
@@ -57,11 +56,11 @@ class SubscribeSerializer(UserSerializer):
         user = self.context.get('request').user
         if Subscription.objects.filter(author=author, user=user).exists():
             raise ValidationError(
-                'За этим товарищем мы уже следим!'
+                {'author': 'За этим товарищем мы уже следим!'}
             )
         if user == author:
             raise ValidationError(
-                'Самоподписка - это лишее!',
+                {'author': 'Самоподписка - это лишее!'}
             )
         return data
 
