@@ -7,7 +7,8 @@ from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from .filters import IngredientFilter
+from api.pagination import LimitPageNumberPagination
+from .filters import IngredientFilter, RecipeFilter
 from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from .permissions import IsAuthorOrReadOnly
 from api.serializers import (IngredientSerializer,
@@ -21,7 +22,6 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     '''Вьюсет для ингредиентов.'''
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    pagination_class = None
     filter_backends = (DjangoFilterBackend,)
     filter = IngredientFilter
 
@@ -30,15 +30,15 @@ class TagViewSet(ReadOnlyModelViewSet):
     '''Вьюсет для тегов.'''
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    pagination_class = None
 
 
 class RecipeViewSet(ModelViewSet):
     '''Вьюсет для рецептов.'''
     queryset = Recipe.objects.all()
     permission_classes = (IsAuthorOrReadOnly,)
+    pagination_class = LimitPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
-    # filterset_class = RecipeFilter
+    filterset_class = RecipeFilter
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

@@ -13,6 +13,7 @@ from user.models import Subscription, User
 
 
 class UserSerializer(ModelSerializer):
+    '''Сериализатор для пользователя.'''
     is_subscribed = SerializerMethodField()
 
     class Meta:
@@ -35,6 +36,7 @@ class UserSerializer(ModelSerializer):
 
 
 class SubscribeSerializer(UserSerializer):
+    '''Сериализатор для подписок.'''
     recipes_count = SerializerMethodField()
     recipes = SerializerMethodField()
 
@@ -52,6 +54,7 @@ class SubscribeSerializer(UserSerializer):
         read_only_fields = ('email', 'username')
 
     def validate(self, data):
+        '''Проверка повторных подписок и самоподписок.'''
         author = self.instance
         user = self.context.get('request').user
         if Subscription.objects.filter(author=author, user=user).exists():
@@ -68,6 +71,7 @@ class SubscribeSerializer(UserSerializer):
         return obj.recipes.count()
 
     def get_recipes(self, obj):
+        '''Вывод ограниченного числа рецептов.'''
         request = self.context.get('request')
         limit = request.GET.get('recipes_limit')
         recipes = obj.recipes.all()
