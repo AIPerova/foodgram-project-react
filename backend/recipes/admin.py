@@ -23,7 +23,7 @@ class IngredientTagAdminInLine(admin.StackedInline):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'id', 'author', 'fav_recipes')
+    list_display = ('name', 'author')
     readonly_fields = ('fav_recipes',)
     list_filter = ('author', 'name', 'tags')
     inlines = (TagTagAdminInline, IngredientTagAdminInLine)
@@ -41,7 +41,7 @@ class IngredientAdmin(admin.ModelAdmin):
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    list_display = ('name', 'color', 'slug')
+    list_display = ('name', 'slug')
 
 
 @admin.register(ShoppingCart)

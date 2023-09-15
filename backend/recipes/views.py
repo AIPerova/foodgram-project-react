@@ -1,6 +1,12 @@
+from datetime import datetime
+from django.db.models import Sum
+from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
@@ -9,7 +15,12 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api.pagination import LimitPageNumberPagination
 from .filters import IngredientFilter, RecipeFilter
-from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
+from .models import (Favorite,
+                     Ingredient,
+                     IngredientToRecipe,
+                     Recipe,
+                     ShoppingCart,
+                     Tag)
 from .permissions import IsAuthorOrReadOnly
 from api.serializers import (IngredientSerializer,
                              RecipeReadSerializer,
@@ -85,3 +96,33 @@ class RecipeViewSet(ModelViewSet):
         if request.method == 'POST':
             return self.add_to(ShoppingCart, request.user, pk)
         return self.delete_from(ShoppingCart, request.user, pk)
+
+    @action(detail=False, methods=['get'],
+            permission_classes=[IsAuthenticated])
+    def download_shopping_cart(self, request):
+        '''Выгрузка списка покупок в файл.'''
+        ingredients = IngredientToRecipe.objects.filter(
+            recipe__shopping_cart__user=request.user).values_list(
+                'ingredient__name',
+                'ingredient__measurement_unit',
+        ).annotate(count=Sum('amount'))
+        pdfmetrics.registerFont(
+            TTFont('DejaVuSerif', 'DejaVuSerif.ttf', 'UTF-8'))
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = ('attachment; '
+                                           'filename="shopping_list.pdf"')
+        page = canvas.Canvas(response)
+        page.setFont('DejaVuSerif', size=25)
+        today = datetime.today()
+        page.drawString(100, 700, f'Список покупок на {today:%d.%m}:')
+        page.setFont('DejaVuSerif', size=15)
+        height = 600
+        for ingredient in ingredients:
+            page.drawString(
+                50, height,
+                ('{} ({}) - {}'.format(*ingredient))
+            )
+            height -= 20
+        page.showPage()
+        page.save()
+        return response
