@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-from rest_framework import status
+from rest_framework import status, filters
 from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
@@ -33,8 +33,8 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     '''Вьюсет для ингредиентов.'''
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    filter_backends = (DjangoFilterBackend,)
-    filter = IngredientFilter
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter,)
+    filterset_class = IngredientFilter
 
 
 class TagViewSet(ReadOnlyModelViewSet):

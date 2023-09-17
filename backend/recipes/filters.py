@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django_filters.rest_framework import FilterSet, filters
 
 from .models import Ingredient, Recipe
@@ -5,11 +6,18 @@ from .models import Ingredient, Recipe
 
 class IngredientFilter(FilterSet):
     '''Поиск игредиента на началу названия.'''
-    name = filters.CharFilter(lookup_expr='startswith')
+    name = filters.CharFilter(
+        field_name='name', method='get_name_or_contains'
+    )
+
+    def get_name_or_contains(self, queryset, name, value):
+        return queryset.filter(
+            Q(name__istartswith=value) | Q(name__icontains=value)
+        ).distinct()
 
     class Meta:
         model = Ingredient
-        fields = ['name']
+        fields = ('name',)
 
 
 class RecipeFilter(FilterSet):
