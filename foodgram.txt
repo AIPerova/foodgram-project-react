@@ -1,0 +1,4 @@
+IP: 158.160.30.11;
+name_foodgram: https://foodforyou.hopto.org/;
+login: hhh@hhh.hhh;
+password: wowowo23;
