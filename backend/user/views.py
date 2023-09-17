@@ -5,9 +5,9 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from user.models import Subscription, User
-from api.serializers import UserSerializer, SubscribeSerializer
 from api.pagination import LimitPageNumberPagination
+from api.serializers import SubscribeSerializer, UserSerializer
+from user.models import Subscription, User
 
 
 class UserViewSet(UserViewSet):
