@@ -6,13 +6,14 @@ from django.db import models
 class User(AbstractUser):
     '''Модель переопреляющая пользователя.'''
     email = models.EmailField(
-        'email address',
+        'Адрес электронной почты',
         max_length=settings.MAX_EMAIL_LENGHT,
         unique=True,
     )
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
     USERNAME_FIELD = 'email'
+    LOGIN_FIELD = 'email'
     REQUIRED_FIELDS = [
         'username',
         'first_name',

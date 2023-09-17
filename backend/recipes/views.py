@@ -1,5 +1,5 @@
 from datetime import datetime
-from django.db.models import Sum
+# from django.db.models import Sum
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
@@ -81,7 +81,7 @@ class RecipeViewSet(ModelViewSet):
         permission_classes=[IsAuthenticated]
     )
     def favorite(self, request, pk):
-        '''Метод для добавления.удаления рецепов в избранное.'''
+        '''Метод для добавления,удаления рецепов в избранное.'''
         if request.method == 'POST':
             return self.add_to(Favorite, request.user, pk)
         return self.delete_from(Favorite, request.user, pk)
@@ -100,12 +100,21 @@ class RecipeViewSet(ModelViewSet):
     @action(detail=False, methods=['get'],
             permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
-        '''Выгрузка списка покупок в файл.'''
+        '''Загрузка списка игридиентов для покупок.'''
         ingredients = IngredientToRecipe.objects.filter(
             recipe__shopping_cart__user=request.user).values_list(
-                'ingredient__name',
-                'ingredient__measurement_unit',
-        ).annotate(count=Sum('amount'))
+            'ingredient__name',
+            'ingredient__measurement_unit',
+            'amount')
+        shop_list = {}
+        for item in ingredients:
+            name = item[0]
+            if name not in shop_list:
+                shop_list[name] = {
+                    'measurement_unit': item[1],
+                    'amount': item[2]}
+            else:
+                shop_list[name]['amount'] += item[2]
         pdfmetrics.registerFont(
             TTFont('DejaVuSerif', 'DejaVuSerif.ttf', 'UTF-8'))
         response = HttpResponse(content_type='application/pdf')
@@ -117,10 +126,10 @@ class RecipeViewSet(ModelViewSet):
         page.drawString(100, 700, f'Список покупок на {today:%d.%m}:')
         page.setFont('DejaVuSerif', size=15)
         height = 600
-        for ingredient in ingredients:
+        for i, k in shop_list.items():
             page.drawString(
                 50, height,
-                ('{} ({}) - {}'.format(*ingredient))
+                (f'{i}  - {k["amount"]} ({k["measurement_unit"]})')
             )
             height -= 20
         page.showPage()
