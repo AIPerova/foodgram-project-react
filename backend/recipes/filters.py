@@ -26,6 +26,7 @@ class RecipeFilter(FilterSet):
     tags = filters.ModelMultipleChoiceFilter(
         field_name='tags__slug',
         to_field_name='slug',
+        lookup_type='in',
         queryset=Tag.objects.all()
     )
     is_favorited = filters.BooleanFilter(method='filter_is_favorited')
