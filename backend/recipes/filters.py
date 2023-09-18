@@ -1,5 +1,7 @@
 from django.db.models import Q
-from django_filters.rest_framework import FilterSet, filters
+from django_filters.rest_framework import (FilterSet,
+                                           filters,
+                                           ModelMultipleChoiceFilter)
 
 from .models import Ingredient, Recipe, Tag
 
@@ -23,7 +25,7 @@ class IngredientFilter(FilterSet):
 class RecipeFilter(FilterSet):
     '''Фильтрация рецептов.'''
     # tags = filters.AllValuesMultipleFilter(field_name='tags__slug')
-    tags = filters.ModelMultipleChoiceFilter(
+    tags = ModelMultipleChoiceFilter(
         field_name='tags__slug',
         to_field_name='slug',
         lookup_type='in',
