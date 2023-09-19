@@ -10,8 +10,10 @@ class User(AbstractUser):
         max_length=settings.MAX_EMAIL_LENGHT,
         unique=True,
     )
-    first_name = models.CharField(max_length=150, blank=True)
-    last_name = models.CharField(max_length=150, blank=True)
+    first_name = models.CharField(max_length=settings.MAX_USER_NAME,
+                                  blank=True)
+    last_name = models.CharField(max_length=settings.MAX_USER_NAME,
+                                 blank=True)
     USERNAME_FIELD = 'email'
     LOGIN_FIELD = 'email'
     REQUIRED_FIELDS = [
