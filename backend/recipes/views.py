@@ -16,7 +16,7 @@ from .filters import IngredientFilter, RecipeFilter
 from .models import (Favorite, Ingredient, IngredientToRecipe, Recipe,
                      ShoppingCart, Tag)
 from .permissions import IsAuthorOrReadOnly
-from api.pagination import LimitPageNumberPagination
+# from api.pagination import LimitPageNumberPagination
 from api.serializers import (IngredientSerializer, RecipeReadSerializer,
                              RecipeShortSerializer, RecipeWriteSerializer,
                              TagSerializer)
@@ -40,7 +40,7 @@ class RecipeViewSet(ModelViewSet):
     '''Вьюсет для рецептов.'''
     queryset = Recipe.objects.all()
     permission_classes = (IsAuthorOrReadOnly,)
-    pagination_class = LimitPageNumberPagination
+    # pagination_class = LimitPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
