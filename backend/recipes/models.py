@@ -103,7 +103,8 @@ class IngredientToRecipe(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        verbose_name='Ингредиент'
+        verbose_name='Ингредиент',
+        db_index=True
     )
     recipe = models.ForeignKey(
         Recipe,
@@ -147,6 +148,12 @@ class TagToRecipe(models.Model):
     class Meta:
         verbose_name = 'тег/рецепт'
         verbose_name_plural = 'Теги/Рецепты'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'tag'],
+                name='unique_tag_to_recipe',
+            )
+        ]
 
     def __str__(self):
         return f'Рецепт {self.recipe} с тегом {self.tag}'

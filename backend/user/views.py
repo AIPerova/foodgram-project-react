@@ -18,26 +18,31 @@ class UserViewSet(UserViewSet):
 
     @action(
         detail=True,
-        methods=['post', 'delete'],
+        methods=['post'],
         permission_classes=[IsAuthenticated]
     )
     def subscribe(self, request, **kwargs):
-        '''Подписки и удаление подписок на авторов'''
-        user = request.user
-        author = get_object_or_404(User, id=self.kwargs.get('id'))
+        '''Подписаться на автора.'''
+        serializer = SubscribeSerializer(
+            get_object_or_404(User, id=self.kwargs.get('id')),
+            data=request.data,
+            context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        Subscription.objects.create(user=request.user,
+                                    author=get_object_or_404(
+                                        User,
+                                        id=self.kwargs.get('id')))
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        if request.method == 'POST':
-            serializer = SubscribeSerializer(author,
-                                             data=request.data,
-                                             context={"request": request})
-            serializer.is_valid(raise_exception=True)
-            Subscription.objects.create(user=user, author=author)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        if request.method == 'DELETE':
-            get_object_or_404(Subscription, user=user, author=author
-                              ).delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+    @subscribe.mapping.delete
+    def delete_subscribe(self, request, **Kwargs):
+        '''Удаление подписки на автора.'''
+        get_object_or_404(
+            Subscription,
+            user=request.user,
+            author=get_object_or_404(User, id=self.kwargs.get('id'))
+        ).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
         detail=False,

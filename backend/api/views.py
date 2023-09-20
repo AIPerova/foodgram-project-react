@@ -13,13 +13,13 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from .filters import IngredientFilter, RecipeFilter
-from .models import (Favorite, Ingredient, IngredientToRecipe, Recipe,
-                     ShoppingCart, Tag)
+from recipes.models import (Favorite, Ingredient, IngredientToRecipe, Recipe,
+                            ShoppingCart, Tag)
 from .permissions import IsAuthorOrReadOnly
-from api.pagination import LimitPageNumberPagination
-from api.serializers import (IngredientSerializer, RecipeReadSerializer,
-                             RecipeShortSerializer, RecipeWriteSerializer,
-                             TagSerializer)
+from .pagination import LimitPageNumberPagination
+from .serializers import (IngredientSerializer, RecipeReadSerializer,
+                          RecipeShortSerializer, RecipeWriteSerializer,
+                          TagSerializer)
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
