@@ -11,7 +11,6 @@ login: hhh@hhh.hhh;
 
 password: wowowo23;
 
-Стек: Python 3, Django 3, Django REST Framework, SQLite3, PostgreSQL, gunicorn, nginx, Яндекс.Облако (Ubuntu 18.04)
 
 # Как запустить проект:
 Клонировать репозиторий и перейти в него в командной строке:
@@ -51,3 +50,5 @@ sudo docker-compose exec web python manage.py createsuperuser
 ```
 sudo docker -compose exec backend python manage.py load_ingredients
 ```
+
+Стек: Python 3, Django 3, Django REST Framework, SQLite3, PostgreSQL, gunicorn, nginx, Яндекс.Облако (Ubuntu 18.04)
